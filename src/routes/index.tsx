@@ -148,7 +148,7 @@ function Index() {
             align="left"
           />
           <PlayerPanel
-            name="Gilded AI"
+            name="Checkmate AI"
             elo={ELO_BY_DIFFICULTY[difficulty]}
             color="b"
             isTurn={turn === "b" && !gameOver}
@@ -185,7 +185,7 @@ function Index() {
           {/* Right panel (desktop) */}
           <aside className="hidden flex-col gap-4 lg:flex">
             <PlayerPanel
-              name="Gilded AI"
+              name="Checkmate AI"
               elo={ELO_BY_DIFFICULTY[difficulty]}
               color="b"
               isTurn={turn === "b" && !gameOver}
