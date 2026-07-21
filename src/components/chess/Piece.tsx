@@ -50,7 +50,7 @@ const DEFS = `
 
 function themeSvg(raw: string, color: Color): string {
   const bodyFill = color === "w" ? "url(#pieceLight)" : "url(#pieceDark)";
-  const rimFill = color === "w" ? "url(#pieceLightRim)" : "url(#pieceDarkRim)";
+  
   const strokeColor = color === "w" ? "#3d2a10" : "#000";
   const strokeWidth = color === "w" ? "1.3" : "1.5";
 
