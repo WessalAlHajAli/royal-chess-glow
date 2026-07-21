@@ -1,85 +1,71 @@
+import { Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrthographicCamera } from "@react-three/drei";
 import type { PieceSymbol, Color } from "chess.js";
+import { Piece3D } from "./pieces3d";
+import { ClientOnly } from "./ClientOnly";
 
-// Cburnett SVG piece set (public domain / CC-BY-SA on Wikimedia Commons).
-// Imported as raw text so we can inject gradient fills for a metallic look.
-import wK from "@/assets/pieces/wK.svg?raw";
-import wQ from "@/assets/pieces/wQ.svg?raw";
-import wR from "@/assets/pieces/wR.svg?raw";
-import wB from "@/assets/pieces/wB.svg?raw";
-import wN from "@/assets/pieces/wN.svg?raw";
-import wP from "@/assets/pieces/wP.svg?raw";
-import bK from "@/assets/pieces/bK.svg?raw";
-import bQ from "@/assets/pieces/bQ.svg?raw";
-import bR from "@/assets/pieces/bR.svg?raw";
-import bB from "@/assets/pieces/bB.svg?raw";
-import bN from "@/assets/pieces/bN.svg?raw";
-import bP from "@/assets/pieces/bP.svg?raw";
+/**
+ * Renders a single chess piece as a real 3D object (Three.js lathe geometry
+ * with physically based materials, real lights, contact shadow).
+ *
+ * The 2D board stays exactly as it was; each square hosts one of these
+ * self-contained mini-scenes.
+ */
+function PieceScene({ type, color }: { type: PieceSymbol; color: Color }) {
+  const isWhite = color === "w";
+  return (
+    <>
+      {/* Framing camera – ortho keeps sizes consistent across pieces */}
+      <OrthographicCamera
+        makeDefault
+        position={[0, 0.75, 4]}
+        zoom={140}
+        near={0.1}
+        far={20}
+      />
+      {/* Lighting: warm key, cool fill, gold rim */}
+      <ambientLight intensity={0.35} />
+      <hemisphereLight
+        args={[isWhite ? "#fff2d0" : "#b7c1d8", "#141018", 0.55]}
+      />
+      {/* Key */}
+      <directionalLight
+        position={[2.4, 4, 3]}
+        intensity={2.2}
+        color="#fff2d4"
+      />
+      {/* Cool fill from opposite side */}
+      <directionalLight
+        position={[-2.8, 2, 1]}
+        intensity={0.55}
+        color="#8ea6ff"
+      />
+      {/* Warm gold rim from behind – reads the silhouette edge */}
+      <directionalLight
+        position={[0.5, 1.6, -3.2]}
+        intensity={isWhite ? 1.4 : 2.4}
+        color="#f5c876"
+      />
+      {/* Subtle up-fill to lift the base */}
+      <pointLight position={[0, 0.1, 1.6]} intensity={0.35} color="#ffd9a0" />
 
-const RAW: Record<Color, Record<PieceSymbol, string>> = {
-  w: { k: wK, q: wQ, r: wR, b: wB, n: wN, p: wP },
-  b: { k: bK, q: bQ, r: bR, b: bB, n: bN, p: bP },
-};
-
-// Metallic gradient defs (pearl-ivory / charcoal) injected once into every SVG.
-const DEFS = `
-<defs>
-  <linearGradient id="pieceLight" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#fffdf3"/>
-    <stop offset="45%" stop-color="#f4e9c9"/>
-    <stop offset="100%" stop-color="#b09867"/>
-  </linearGradient>
-  <linearGradient id="pieceLightRim" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
-    <stop offset="30%" stop-color="#ffffff" stop-opacity="0"/>
-  </linearGradient>
-  <linearGradient id="pieceDark" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#5a5a63"/>
-    <stop offset="30%" stop-color="#33333a"/>
-    <stop offset="70%" stop-color="#141418"/>
-    <stop offset="100%" stop-color="#050508"/>
-  </linearGradient>
-  <linearGradient id="pieceDarkRim" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#a9a9b3" stop-opacity="0.55"/>
-    <stop offset="18%" stop-color="#a9a9b3" stop-opacity="0"/>
-  </linearGradient>
-  <radialGradient id="pieceShine" cx="0.35" cy="0.25" r="0.5">
-    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
-    <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
-  </radialGradient>
-</defs>`;
-
-function themeSvg(raw: string, color: Color): string {
-  const bodyFill = color === "w" ? "url(#pieceLight)" : "url(#pieceDark)";
-  
-  const strokeColor = color === "w" ? "#3d2a10" : "#000";
-  const strokeWidth = color === "w" ? "1.3" : "1.5";
-
-  let svg = raw
-    // Body fills
-    .replace(/fill="#fff"/gi, `fill="${bodyFill}"`)
-    .replace(/fill="#ffffff"/gi, `fill="${bodyFill}"`)
-    .replace(/fill="white"/gi, `fill="${bodyFill}"`)
-    .replace(/fill="#000"/gi, `fill="${color === "w" ? strokeColor : bodyFill}"`)
-    .replace(/fill="#000000"/gi, `fill="${color === "w" ? strokeColor : bodyFill}"`)
-    .replace(/fill="black"/gi, `fill="${color === "w" ? strokeColor : bodyFill}"`)
-    // Stroke colors — keep warm dark on white pieces, keep near-black on dark
-    .replace(/stroke="#000"/gi, `stroke="${strokeColor}"`)
-    .replace(/stroke="#000000"/gi, `stroke="${strokeColor}"`)
-    // Add a subtle stroke on any root <g> that only sets fill.
-    .replace(/<g /, `<g stroke-width="${strokeWidth}" `);
-
-  // Force viewBox + fluid sizing so the piece scales to its container.
-  // Overlays are omitted because SVG rects can't be clipped to the piece
-  // silhouette without a mask; the gradient body fills + drop-shadow filter
-  // already deliver the metallic depth and rim highlight.
-  svg = svg.replace(/<svg([^>]*)>/, (_m, attrs: string) => {
-    let a = attrs
-      .replace(/\swidth="[^"]*"/i, "")
-      .replace(/\sheight="[^"]*"/i, "");
-    if (!/viewBox/i.test(a)) a += ' viewBox="0 0 45 45"';
-    return `<svg${a} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">${DEFS}`;
-  });
-  return svg;
+      <Suspense fallback={null}>
+        <group position={[0, 0, 0]}>
+          <Piece3D type={type} color={color} position={[0, 0, 0]} scale={1} />
+          {/* Soft contact shadow disc under the piece */}
+          <mesh
+            position={[0, 0.001, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            raycast={() => null}
+          >
+            <circleGeometry args={[0.4, 32]} />
+            <meshBasicMaterial color="#000" transparent opacity={0.28} />
+          </mesh>
+        </group>
+      </Suspense>
+    </>
+  );
 }
 
 export function Piece({
@@ -91,22 +77,29 @@ export function Piece({
   color: Color;
   size?: number | string;
 }) {
-  const raw = RAW[color][type];
-  const html = themeSvg(raw, color);
   const dim = size ?? "100%";
+  const dropShadow =
+    color === "w"
+      ? "drop-shadow(0 3px 4px rgba(0,0,0,0.55))"
+      : "drop-shadow(0 3px 6px rgba(0,0,0,0.85))";
+
   return (
     <span
       aria-hidden
       className="pointer-events-none block select-none"
-      style={{
-        width: dim,
-        height: dim,
-        filter:
-          color === "w"
-            ? "drop-shadow(0 3px 4px rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(255,240,200,0.35))"
-            : "drop-shadow(0 3px 6px rgba(0,0,0,0.85)) drop-shadow(0 0 1px rgba(255,255,255,0.08))",
-      }}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+      style={{ width: dim, height: dim, filter: dropShadow }}
+    >
+      <ClientOnly>
+        <Canvas
+          shadows={false}
+          dpr={[1, 2]}
+          frameloop="demand"
+          gl={{ antialias: true, alpha: true, preserveDrawingBuffer: false }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <PieceScene type={type} color={color} />
+        </Canvas>
+      </ClientOnly>
+    </span>
   );
 }

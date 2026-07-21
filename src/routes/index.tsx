@@ -13,17 +13,17 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Gilded — Play Chess Against a Modular AI" },
+      { title: "Checkmate AI — Play Chess Against a Modular AI" },
       {
         name: "description",
         content:
-          "A premium, front-facing chess board with four AI difficulty levels — Easy, Medium, Hard, and Master. Full rules, castling, en passant, and promotion in a dark glassmorphism UI.",
+          "Checkmate AI: a premium, front-facing chess board with four AI difficulty levels — Easy, Medium, Hard, and Master. Full rules, castling, en passant, and promotion in a dark glassmorphism UI.",
       },
-      { property: "og:title", content: "Gilded — Play Chess Against a Modular AI" },
+      { property: "og:title", content: "Checkmate AI — Play Chess Against a Modular AI" },
       {
         property: "og:description",
         content:
-          "A premium, front-facing chess board with four AI difficulty levels — Easy, Medium, Hard, and Master. Full rules, castling, en passant, and promotion in a dark glassmorphism UI.",
+          "Checkmate AI: a premium, front-facing chess board with four AI difficulty levels — Easy, Medium, Hard, and Master.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -110,10 +110,10 @@ function Index() {
           </div>
           <div className="leading-tight">
             <div className="font-display text-2xl text-gold-gradient sm:text-3xl">
-              Gilded
+              Checkmate AI
             </div>
             <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-              Chess Salon
+              Play &amp; Learn
             </div>
           </div>
         </div>
