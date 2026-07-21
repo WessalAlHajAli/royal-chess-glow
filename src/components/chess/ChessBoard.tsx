@@ -113,7 +113,7 @@ export function ChessBoard({ game }: { game: Game }) {
                           : undefined,
                     }}
                   >
-                    <Piece type={piece.type} color={piece.color} size={"100%" as unknown as number} />
+                    <Piece type={piece.type} color={piece.color} />
                   </span>
                 )}
 

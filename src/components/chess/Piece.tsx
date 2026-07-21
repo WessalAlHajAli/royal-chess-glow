@@ -89,21 +89,22 @@ function themeSvg(raw: string, color: Color): string {
 export function Piece({
   type,
   color,
-  size = 64,
+  size,
 }: {
   type: PieceSymbol;
   color: Color;
-  size?: number;
+  size?: number | string;
 }) {
   const raw = RAW[color][type];
   const html = themeSvg(raw, color);
+  const dim = size ?? "100%";
   return (
     <span
       aria-hidden
       className="pointer-events-none block select-none"
       style={{
-        width: size,
-        height: size,
+        width: dim,
+        height: dim,
         filter:
           color === "w"
             ? "drop-shadow(0 3px 4px rgba(0,0,0,0.55)) drop-shadow(0 1px 0 rgba(255,240,200,0.35))"
