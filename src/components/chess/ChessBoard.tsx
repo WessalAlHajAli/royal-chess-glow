@@ -105,18 +105,15 @@ export function ChessBoard({ game }: { game: Game }) {
                 {piece && (
                   <span
                     key={`${sq}-${piece.color}${piece.type}`}
-                    className="relative z-10 flex h-full w-full items-center justify-center"
+                    className="relative z-10 flex h-[86%] w-[86%] items-center justify-center"
                     style={{
-                      animation: isLast && lastMove?.to === sq
-                        ? "chess-move 260ms cubic-bezier(0.2,0.7,0.2,1)"
-                        : undefined,
+                      animation:
+                        isLast && lastMove?.to === sq
+                          ? "chess-move 260ms cubic-bezier(0.2,0.7,0.2,1)"
+                          : undefined,
                     }}
                   >
-                    <Piece
-                      type={piece.type}
-                      color={piece.color}
-                      size={Math.round(72)}
-                    />
+                    <Piece type={piece.type} color={piece.color} />
                   </span>
                 )}
 
