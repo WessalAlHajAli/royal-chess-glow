@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { PieceCanvasProvider } from "../components/chess/PieceCanvas";
 
 function NotFoundComponent() {
   return (
@@ -77,15 +78,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Gilded — Play Chess Against a Modular AI" },
+      { title: "Checkmate AI — Play Chess Against a Modular AI" },
       { name: "description", content: "A premium, front-facing chess board with four AI difficulty levels — Easy, Medium, Hard, and Master. Full rules, castling, en passant, and promotion in a dark glassmorphism UI." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Gilded — Play Chess Against a Modular AI" },
+      { property: "og:title", content: "Checkmate AI — Play Chess Against a Modular AI" },
       { property: "og:description", content: "A premium, front-facing chess board with four AI difficulty levels — Easy, Medium, Hard, and Master. Full rules, castling, en passant, and promotion in a dark glassmorphism UI." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Gilded — Play Chess Against a Modular AI" },
+      { name: "twitter:title", content: "Checkmate AI — Play Chess Against a Modular AI" },
       { name: "twitter:description", content: "A premium, front-facing chess board with four AI difficulty levels — Easy, Medium, Hard, and Master. Full rules, castling, en passant, and promotion in a dark glassmorphism UI." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8f0f0f4d-707d-41a8-9d11-c422d810ec55/id-preview-22e85cfb--3830b40c-3f11-476e-9540-c4fda5088011.lovable.app-1784675102788.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8f0f0f4d-707d-41a8-9d11-c422d810ec55/id-preview-22e85cfb--3830b40c-3f11-476e-9540-c4fda5088011.lovable.app-1784675102788.png" },
@@ -130,8 +131,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <PieceCanvasProvider>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </PieceCanvasProvider>
     </QueryClientProvider>
   );
 }
