@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Play a fully rules-correct chess game against a modular AI engine with adjustable difficulty.",
+          "A premium, front-facing chess board with four AI difficulty levels — Easy, Medium, Hard, and Master. Full rules, castling, en passant, and promotion in a dark glassmorphism UI.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
