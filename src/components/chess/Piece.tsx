@@ -73,8 +73,16 @@ function themeSvg(raw: string, color: Color): string {
     <rect x="0" y="0" width="45" height="45" fill="url(#pieceShine)" pointer-events="none"/>
     <rect x="0" y="0" width="45" height="45" fill="${rimFill}" pointer-events="none"/>
   `;
-  svg = svg.replace(/<svg([^>]*)>/, `<svg$1>${DEFS}`);
-  svg = svg.replace(/<\/svg>/, `${overlay}</svg>`);
+  // Force viewBox + fluid sizing so the piece scales to its container.
+  svg = svg
+    .replace(/<svg([^>]*)>/, (_m, attrs: string) => {
+      let a = attrs
+        .replace(/\swidth="[^"]*"/i, "")
+        .replace(/\sheight="[^"]*"/i, "");
+      if (!/viewBox/i.test(a)) a += ' viewBox="0 0 45 45"';
+      return `<svg${a} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">${DEFS}`;
+    })
+    .replace(/<\/svg>/, `${overlay}</svg>`);
   return svg;
 }
 
