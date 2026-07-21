@@ -68,21 +68,17 @@ function themeSvg(raw: string, color: Color): string {
     // Add a subtle stroke on any root <g> that only sets fill.
     .replace(/<g /, `<g stroke-width="${strokeWidth}" `);
 
-  // Inject defs + shine/rim overlays before </svg>
-  const overlay = `
-    <rect x="0" y="0" width="45" height="45" fill="url(#pieceShine)" pointer-events="none"/>
-    <rect x="0" y="0" width="45" height="45" fill="${rimFill}" pointer-events="none"/>
-  `;
   // Force viewBox + fluid sizing so the piece scales to its container.
-  svg = svg
-    .replace(/<svg([^>]*)>/, (_m, attrs: string) => {
-      let a = attrs
-        .replace(/\swidth="[^"]*"/i, "")
-        .replace(/\sheight="[^"]*"/i, "");
-      if (!/viewBox/i.test(a)) a += ' viewBox="0 0 45 45"';
-      return `<svg${a} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">${DEFS}`;
-    })
-    .replace(/<\/svg>/, `${overlay}</svg>`);
+  // Overlays are omitted because SVG rects can't be clipped to the piece
+  // silhouette without a mask; the gradient body fills + drop-shadow filter
+  // already deliver the metallic depth and rim highlight.
+  svg = svg.replace(/<svg([^>]*)>/, (_m, attrs: string) => {
+    let a = attrs
+      .replace(/\swidth="[^"]*"/i, "")
+      .replace(/\sheight="[^"]*"/i, "");
+    if (!/viewBox/i.test(a)) a += ' viewBox="0 0 45 45"';
+    return `<svg${a} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">${DEFS}`;
+  });
   return svg;
 }
 
