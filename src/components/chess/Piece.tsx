@@ -25,6 +25,10 @@ function PieceScene({ type, color }: { type: PieceSymbol; color: Color }) {
       />
       <pointLight position={[0, 0.1, 1.8]} intensity={0.45} color="#ffd9a0" />
       <Suspense fallback={null}>
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshBasicMaterial color="hotpink" />
+        </mesh>
         <group position={[0, -0.7, 0]}>
           <Piece3D type={type} color={color} />
           <mesh position={[0, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
