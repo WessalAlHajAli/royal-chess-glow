@@ -19,13 +19,10 @@ function PieceScene({ type, color }: { type: PieceSymbol; color: Color }) {
       />
       <pointLight position={[0, 0.1, 1.8]} intensity={0.45} color="#ffd9a0" />
       <Suspense fallback={null}>
-        <group position={[0, -0.7, 0]}>
-          <Piece3D type={type} color={color} />
-          <mesh position={[0, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[0.42, 32]} />
-            <meshBasicMaterial color="#000" transparent opacity={0.34} />
-          </mesh>
-        </group>
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[1.2, 1.2, 1.2]} />
+          <meshBasicMaterial color="hotpink" />
+        </mesh>
       </Suspense>
     </>
   );
@@ -64,7 +61,7 @@ export function Piece({
         <Canvas
           shadows={false}
           dpr={[1, 2]}
-          frameloop="demand"
+          frameloop="always"
           camera={{ position: [0, 0, 3.4], fov: 30, near: 0.1, far: 20 }}
           gl={{
             antialias: true,
