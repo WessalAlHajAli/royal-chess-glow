@@ -16,12 +16,11 @@ function PieceScene({ type, color }: { type: PieceSymbol; color: Color }) {
     <>
       <PerspectiveCamera
         makeDefault
-        position={[0, 0.75, 3.2]}
+        position={[0, 0, 3.4]}
         fov={30}
         near={0.1}
         far={20}
       />
-      {/* Look at piece center */}
       <ambientLight intensity={0.4} />
       <hemisphereLight args={[isWhite ? "#fff2d0" : "#c1c9dc", "#141018", 0.55]} />
       {/* Key light: warm from upper-right */}
