@@ -1,5 +1,5 @@
 import { Suspense, useRef } from "react";
-import { View, OrthographicCamera } from "@react-three/drei";
+import { View, PerspectiveCamera } from "@react-three/drei";
 import type { PieceSymbol, Color } from "chess.js";
 import { Piece3D } from "./pieces3d";
 import { ClientOnly } from "./ClientOnly";
@@ -14,13 +14,14 @@ function PieceScene({ type, color }: { type: PieceSymbol; color: Color }) {
   const isWhite = color === "w";
   return (
     <>
-      <OrthographicCamera
+      <PerspectiveCamera
         makeDefault
-        position={[0, 0.72, 4]}
-        zoom={130}
+        position={[0, 0.75, 3.2]}
+        fov={30}
         near={0.1}
         far={20}
       />
+      {/* Look at piece center */}
       <ambientLight intensity={0.4} />
       <hemisphereLight args={[isWhite ? "#fff2d0" : "#c1c9dc", "#141018", 0.55]} />
       {/* Key light: warm from upper-right */}
