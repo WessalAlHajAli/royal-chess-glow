@@ -1,5 +1,5 @@
 import type { Square } from "chess.js";
-import { Piece } from "./Piece";
+import { BoardPieces3D } from "./BoardPieces3D";
 import { useChessGame } from "@/hooks/useChessGame";
 import { cn } from "@/lib/utils";
 
@@ -102,28 +102,19 @@ export function ChessBoard({ game }: { game: Game }) {
                   />
                 )}
 
-                {piece && (
-                  <span
-                    key={`${sq}-${piece.color}${piece.type}`}
-                    className="relative z-10 flex h-[86%] w-[86%] items-center justify-center"
-                    style={{
-                      animation:
-                        isLast && lastMove?.to === sq
-                          ? "chess-move 260ms cubic-bezier(0.2,0.7,0.2,1)"
-                          : undefined,
-                    }}
-                  >
-                    <Piece type={piece.type} color={piece.color} />
-                  </span>
-                )}
+                {/* Pieces are rendered as real 3D objects in a single
+                    Canvas overlay below (see <BoardPieces3D />). Per-square
+                    piece rendering is intentionally omitted. */}
 
-                {/* move-target dot / capture ring */}
+                {/* move-target dot / capture ring — kept above the 3D
+                    piece overlay via z-index so hints stay visible. */}
                 {isTarget && !hasCapture && (
                   <span
                     className="pointer-events-none absolute rounded-full"
                     style={{
                       width: "26%",
                       height: "26%",
+                      zIndex: 10,
                       background:
                         "radial-gradient(circle, rgba(230,190,90,0.85) 0%, rgba(230,190,90,0.5) 60%, transparent 100%)",
                       boxShadow: "0 0 12px rgba(230,190,90,0.6)",
