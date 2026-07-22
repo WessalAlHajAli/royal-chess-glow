@@ -11,7 +11,6 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { PieceCanvasProvider } from "../components/chess/PieceCanvas";
 
 
 function NotFoundComponent() {
@@ -132,10 +131,8 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PieceCanvasProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-      </PieceCanvasProvider>
+      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <Outlet />
     </QueryClientProvider>
   );
 }
