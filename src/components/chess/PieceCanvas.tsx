@@ -21,6 +21,7 @@ export function PieceCanvasProvider({ children }: { children: ReactNode }) {
         <Canvas
           shadows={false}
           dpr={[1, 2]}
+          camera={{ position: [0, 0, 3.4], fov: 30, near: 0.1, far: 20 }}
           gl={{
             antialias: true,
             alpha: true,
