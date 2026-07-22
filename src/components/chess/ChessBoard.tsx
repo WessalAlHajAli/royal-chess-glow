@@ -125,6 +125,7 @@ export function ChessBoard({ game }: { game: Game }) {
                   <span
                     className="pointer-events-none absolute inset-[6%] rounded-full"
                     style={{
+                      zIndex: 10,
                       boxShadow:
                         "inset 0 0 0 4px rgba(230,190,90,0.85), 0 0 18px rgba(230,190,90,0.55)",
                     }}
