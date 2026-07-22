@@ -160,6 +160,12 @@ export function ChessBoard({ game }: { game: Game }) {
             );
           }),
         )}
+
+        {/* Single WebGL Canvas overlay renders all 32 pieces as real 3D
+            objects on top of the 2D board grid. Sized to the grid, not
+            the outer bevel, so world coordinates 0..8 line up with the
+            8×8 squares. */}
+        <BoardPieces3D board={board} />
       </div>
 
       <style>{`
