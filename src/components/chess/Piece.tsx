@@ -1,15 +1,9 @@
 import { Suspense } from "react";
-import { View } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 import type { PieceSymbol, Color } from "chess.js";
 import { Piece3D } from "./pieces3d";
 import { ClientOnly } from "./ClientOnly";
 
-/**
- * Per-piece 3D scene rendered through drei's <View> into the app-wide
- * shared Canvas (see PieceCanvasProvider). Front-facing perspective camera
- * (managed by the shared Canvas) keeps the board perfectly straight while
- * pieces remain real 3D geometry with PBR materials and lighting.
- */
 function PieceScene({ type, color }: { type: PieceSymbol; color: Color }) {
   const isWhite = color === "w";
   return (
@@ -25,10 +19,6 @@ function PieceScene({ type, color }: { type: PieceSymbol; color: Color }) {
       />
       <pointLight position={[0, 0.1, 1.8]} intensity={0.45} color="#ffd9a0" />
       <Suspense fallback={null}>
-        <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshBasicMaterial color="hotpink" />
-        </mesh>
         <group position={[0, -0.7, 0]}>
           <Piece3D type={type} color={color} />
           <mesh position={[0, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -42,9 +32,9 @@ function PieceScene({ type, color }: { type: PieceSymbol; color: Color }) {
 }
 
 /**
- * A single 3D chess piece. Renders as an HTML element (a <View> from drei)
- * whose bounds are scissored into the app-wide shared Canvas. The Canvas
- * lives in PieceCanvasProvider (mounted from __root.tsx).
+ * A single 3D chess piece rendered in its own tiny <Canvas>. Each canvas
+ * uses `frameloop="demand"` so it renders once and stays idle — WebGL
+ * contexts are cheap when they're not animating.
  */
 export function Piece({
   type,
@@ -66,15 +56,30 @@ export function Piece({
         />
       }
     >
-      <View
+      <div
         aria-hidden
         className="pointer-events-none select-none"
         style={{ width: dim, height: dim }}
       >
-        <PieceScene type={type} color={color} />
-      </View>
+        <Canvas
+          shadows={false}
+          dpr={[1, 2]}
+          frameloop="demand"
+          camera={{ position: [0, 0, 3.4], fov: 30, near: 0.1, far: 20 }}
+          gl={{
+            antialias: true,
+            alpha: true,
+            premultipliedAlpha: true,
+            powerPreference: "low-power",
+          }}
+          onCreated={({ gl }) => {
+            gl.setClearColor(0x000000, 0);
+          }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <PieceScene type={type} color={color} />
+        </Canvas>
+      </div>
     </ClientOnly>
   );
 }
-
-
